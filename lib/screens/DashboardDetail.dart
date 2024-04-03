@@ -49,19 +49,28 @@ detailControl.fetchItems();
                 child: ListView.builder(itemBuilder: (context, index){
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Row(
+                    child: Column(
                       children: [
-                        Text(detailControl.items[index].name??''),
-                        GestureDetector(
-                            onTap: (){
-                              detailControl.removeItem(index);
-                            },
-                            child: Text('Delete')),
-                        GestureDetector(
-                            onTap: (){
-                              detailControl.updateItem(index);
-                            },
-                            child: Text('Update')),
+                        Row(
+                          children: [
+                            Text(detailControl.items[index].name??''),
+
+                            GestureDetector(
+                                onTap: (){
+                                  detailControl.removeItem(index);
+                                },
+                                child: Text('Delete')),
+                            GestureDetector(
+                                onTap: (){
+                                  detailControl.updateItem(index);
+                                },
+                                child: Text('Update')),
+                          ],
+                        ),
+                        Text(detailControl.items[index].address.city??''),
+                        Text(detailControl.items[index].address.state??''),
+                        Text(detailControl.items[index].address.country??''),
+
                       ],
                     ),
                   );
@@ -80,6 +89,15 @@ detailControl.fetchItems();
 class Item {
   late String key;
   late String name;
+  late Address address;
 
-  Item(this.key, this.name);
+  Item(this.key, this.name, this.address);
+}
+
+class Address{
+  late String city;
+  late String state;
+  late String country;
+
+  Address(this.city, this.state, this.country);
 }

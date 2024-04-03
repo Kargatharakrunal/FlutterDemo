@@ -57,17 +57,20 @@ class DashboardDetailController extends GetxController{
 
   addItem() {
     String newItemKey = database.child('items').push().key ?? '';
-    database.child('items/$newItemKey').set({'name': 'New Item'});
-    items.add(Item(newItemKey, 'New Item'));
+    database.child('items/$newItemKey').set({'name': 'New Item', 'address': {'city':'surat','state':'gujarat', 'country':'india'}});
+    items.add(Item(newItemKey, 'New Item', Address('surat', 'gujarat', 'india')));
     update();
   }
 
   updateItem(int index) {
     String key = items[index].key;
-    database.child('items/$key').update({'name': 'Updated Item$index'});
+    final newAddress = {'city': 'surat$index', 'state': 'gujarat$index', 'country': 'india$index'};
+    database.child('items/$key').update({'name': 'Updated Item$index', 'address': newAddress});
     items[index].name = 'Updated Item$index';
+    items[index].address = Address('surat$index', 'gujarat$index', 'india$index');
     items.refresh();
     update();
+    // fetchItems();
   }
 
   removeItem(int index) {
@@ -78,14 +81,16 @@ class DashboardDetailController extends GetxController{
   }
 
   fetchItems() {
-    items.clear();
     database.child('items').once().then((event) {
       final dataSnapshot = event.snapshot;
       if (dataSnapshot.value != null) {
         print(dataSnapshot.value);
+        items.clear();
+
         Map<dynamic, dynamic> values = dataSnapshot.value as Map<dynamic, dynamic>;
         values.forEach((key, value) {
-          items.add(Item(key, value['name']));
+          final Map<dynamic, dynamic> addressMap = value['address'] ?? {};
+          items.add(Item(key, value['name'], Address(addressMap['city'],addressMap['state'],addressMap['country'])));
         });
         update();
       }
